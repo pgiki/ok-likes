@@ -51,7 +51,12 @@ class LikedIDsAPIView(APIView):
     """
     post:
     API View to return liked objects ids for a given user.
-    if object_id is given, return is_liked to show if user liked the obje or not
+    if id is given, return is_liked to show if user liked the obje or not
+    Possible payload:\n
+    {
+        "type": "app_label.model",  // object's content type's natural key joined string
+        "id": 1  // optional object's primary key
+    }
     """
     permission_classes = (AllowAny, )
 
@@ -70,7 +75,12 @@ class LikedIDsAPIView(APIView):
             ).exists() if user.is_authenticated else False
             data={
                 'ids':[int(object_id)] if is_liked else [],
-                'is_liked': is_liked
+                'is_liked': is_liked,
+                # return likes count of t
+                'all_likes_count': Like.objects.filter(
+                        content_type = content_type,
+                        object_id = object_id
+                ).count()
             }
         else:
             data = {

@@ -76,7 +76,7 @@ class LikedIDsAPIView(APIView):
             data={
                 'ids':[int(object_id)] if is_liked else [],
                 'is_liked': is_liked,
-                # return likes count of t
+                # return likes count of the object_id
                 'all_likes_count': Like.objects.filter(
                         content_type = content_type,
                         object_id = object_id

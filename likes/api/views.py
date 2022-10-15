@@ -13,7 +13,7 @@ from likes.api.serializers import (
 )
 from likes.models import Like
 from likes.selectors import get_liked_object_ids
-from likes.services import get_user_likes_count
+from likes.services import get_user_likes_count, is_object_liked_by_user
 
 __all__ = (
     'LikedCountAPIView',
@@ -51,22 +51,37 @@ class LikedIDsAPIView(APIView):
     """
     post:
     API View to return liked objects ids for a given user.
+    if object_id is given, return is_liked to show if user liked the obje or not
     """
     permission_classes = (AllowAny, )
 
     def get(self, request, *args, **kwargs):
         serializer = LikeContentTypeSerializer(data=request.GET)
         serializer.is_valid(raise_exception=True)
-
-        return Response(
+        data = dict()
+        object_id = request.GET.get('object_id')
+        content_type = serializer.validated_data.get('type')
+        if object_id:
+            user=request.user
+            is_liked = Like.objects.filter(
+                sender = user,
+                content_type = content_type,
+                object_id = object_id
+            ).exists() if user.is_authenticated else False
             data={
+                'ids':[object_id] if is_liked else [],
+                'is_liked': is_liked
+            }
+        else:
+            data = {
                 'ids': get_liked_object_ids(
                     user=self.request.user,
-                    content_type=serializer.validated_data.get(
-                        'type'
-                    )
+                    content_type=content_type,
                 )
             }
+
+        return Response(
+            data=data
         )
 
 

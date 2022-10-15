@@ -59,7 +59,7 @@ class LikedIDsAPIView(APIView):
         serializer = LikeContentTypeSerializer(data=request.GET)
         serializer.is_valid(raise_exception=True)
         data = dict()
-        object_id = request.GET.get('object_id')
+        object_id = request.GET.get('id')
         content_type = serializer.validated_data.get('type')
         if object_id:
             user=request.user

@@ -69,7 +69,7 @@ class LikedIDsAPIView(APIView):
                 object_id = object_id
             ).exists() if user.is_authenticated else False
             data={
-                'ids':[object_id] if is_liked else [],
+                'ids':[int(object_id)] if is_liked else [],
                 'is_liked': is_liked
             }
         else:

@@ -6,5 +6,5 @@ __all__ = (
 )
 
 
-object_liked = Signal(providing_args=["like", "request"])
-object_unliked = Signal(providing_args=["object", "request"])
+object_liked = Signal()
+object_unliked = Signal()
